@@ -16,14 +16,11 @@ using System.Windows.Shapes;
 
 namespace _2324_2Y_Integ1_2A_Demo
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         Button[] btnNums = new Button[10];
-        int num1 = 0;
-        int num2 = 0;
+        float num1 = 0;
+        float num2 = 0;
         int ope = -1;
 
         public MainWindow()
@@ -44,25 +41,42 @@ namespace _2324_2Y_Integ1_2A_Demo
             for (int x = 0; x < btnNums.Length; x++)
                 btnNums[x].Content = x;
 
+            tbCalc.Text = "0";
             btnAdd.Content = "+";
             btnMin.Content = "-";
-            btnMult.Content = "x";
-            btnDiv.Content = "/";
+            btnMult.Content = "×";
+            btnDiv.Content = "÷";
             btnEnter.Content = "=";
+            btnClr.Content = "C";
+            btnDot.Content = ".";
+            btnPercent.Content = "%";
+            btnPosNeg.Content = "±";
         }
 
-        private void numberEnter(int x)
+        private void numberEnter(float x)
         {
+            if (tbCalc.Text == "0")
+            {
+                tbCalc.Text = "";
+            }
+
             string input = tbCalc.Text;
             input += x;
 
-            if(input.Length > 5 )
+            if(input.Length > 12)
                 input = input.Substring(1);
 
             if (ope == -1)
-                num1 = int.Parse(input);
+                num1 = float.Parse(input);
             else
-                num2 = int.Parse(input);
+            {
+                num2 = float.Parse(input);
+
+                ResetColor(btnAdd);
+                ResetColor(btnMin);
+                ResetColor(btnMult);
+                ResetColor(btnDiv);
+            }
 
             tbCalc.Text = input;
         }
@@ -126,37 +140,132 @@ namespace _2324_2Y_Integ1_2A_Demo
             numberEnter(0);
 
         }
+
+        private void btnDot_Click(object sender, RoutedEventArgs e)
+        {
+            if (!tbCalc.Text.Contains("."))
+            {
+                string input = tbCalc.Text;
+
+                if (input == "")
+                    input = "0";
+
+                input += ".";
+
+                tbCalc.Text = input;
+            }
+        }
         #endregion
 
         #region OperationEvents
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
+            ResetColor(btnMin);
+            ResetColor(btnMult);
+            ResetColor(btnDiv);
             ope = 0;
             tbCalc.Text = "";
+            ChangeColor(btnAdd);
         }
 
         private void btnMin_Click(object sender, RoutedEventArgs e)
         {
+            ResetColor(btnAdd);
+            ResetColor(btnMult);
+            ResetColor(btnDiv);
             ope = 1;
             tbCalc.Text = "";
+            ChangeColor(btnMin);
         }
 
         private void btnMult_Click(object sender, RoutedEventArgs e)
         {
+            ResetColor(btnAdd);
+            ResetColor(btnMin);
+            ResetColor(btnDiv);
             ope = 2;
             tbCalc.Text = "";
+            ChangeColor(btnMult);
         }
 
         private void btnDiv_Click(object sender, RoutedEventArgs e)
         {
+            ResetColor(btnAdd);
+            ResetColor(btnMin);
+            ResetColor(btnMult);
             ope = 3;
             tbCalc.Text = "";
-        } 
+            ChangeColor(btnDiv);
+        }
+
+        private void btnClr_Click(object sender, RoutedEventArgs e)
+        {
+            num1 = 0;
+            num2 = 0;
+            ope = -1;
+            tbCalc.Text = "0";
+            ResetColor(btnAdd);
+            ResetColor(btnMin);
+            ResetColor(btnMult);
+            ResetColor(btnDiv);
+        }
+
+        private void btnPosNeg_Click(object sender, RoutedEventArgs e)
+        {
+            string input = tbCalc.Text;
+
+            if (!string.IsNullOrEmpty(input))
+            {
+                float currentNum = float.Parse(input);
+                currentNum = -currentNum;
+
+                tbCalc.Text = currentNum.ToString();
+
+                if (ope == -1)
+                    num1 = currentNum;
+                else
+                    num2 = currentNum;
+            }
+        }
+
+        private void btnPercent_Click(object sender, RoutedEventArgs e)
+        {
+            string input = tbCalc.Text;
+
+            if (!string.IsNullOrEmpty(input))
+            {
+                float currentNum = float.Parse(input);
+                currentNum = currentNum/100;
+
+                tbCalc.Text = currentNum.ToString();
+
+                if (ope == -1)
+                    num1 = currentNum;
+                else
+                    num2 = currentNum;
+            }
+        }
         #endregion
+
+        private void ChangeColor(Button selectedButton)
+        {
+            selectedButton.Foreground = new SolidColorBrush(Color.FromRgb(247, 144, 1));
+            selectedButton.Background = Brushes.White;
+        }
+        private void ResetColor(Button selectedButton)
+        {
+            selectedButton.Foreground = Brushes.White;
+            selectedButton.Background = new SolidColorBrush(Color.FromRgb(247, 144, 1));
+        }
 
         private void btnEnter_Click(object sender, RoutedEventArgs e)
         {
-            switch(ope)
+            ResetColor(btnAdd);
+            ResetColor(btnMin);
+            ResetColor(btnMult);
+            ResetColor(btnDiv);
+
+            switch (ope)
             {
                 case 0:
                     num1 += num2;
@@ -178,6 +287,6 @@ namespace _2324_2Y_Integ1_2A_Demo
                 ope = -1;
                 num2 = 0;
             }
-        }
+        }        
     }
 }
